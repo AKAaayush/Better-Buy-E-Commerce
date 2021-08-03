@@ -1,16 +1,35 @@
-import React from 'react'
-// import Products from './components/Product/Products'
-// import Navbar from './components/'
-
-import{Products, Navbar} from './components'
+import React, { useState, useEffect } from "react";
+import { commerce } from "./lib/commerce";
+import { Products, Navbar } from "./components";
 
 const App = () => {
-    return (
-        <div>
-            <Navbar/>
-         <Products/>
-        </div>
-    )
-}
+  const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState("");
 
-export default App
+  const fetchProducts = async () => {
+    const { data } = await commerce.products.list();
+    setProducts(data);
+  };
+  console.log(products);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+  return (
+    <div>
+      <Navbar />
+      <Products products={products} />
+
+      <input
+        type="text"
+        placeholder="Search.."
+        onChange={(event) => {
+          setSearch(event.target.value);
+        }}
+        search={search}
+      />
+    </div>
+  );
+};
+
+export default App;
