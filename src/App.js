@@ -4,30 +4,34 @@ import { Products, Navbar } from "./components";
 
 const App = () => {
   const [products, setProducts] = useState([]);
-  const [search, setSearch] = useState("");
+  const [cart, setCart] = useState({});
 
   const fetchProducts = async () => {
     const { data } = await commerce.products.list();
     setProducts(data);
   };
-  console.log(products);
+
+  // Adding cart
+  const addCart = async (productId, quantity) => {
+    const item = await commerce.cart.add(productId, quantity);
+    setCart(item.cart);
+  };
+  // Fetching cart
+  const fetchCart = async () => {
+    const res = await commerce.cart.retrieve();
+    setCart(res);
+  };
 
   useEffect(() => {
     fetchProducts();
+    fetchCart();
   }, []);
+
+  console.log(cart);
   return (
     <div>
       <Navbar />
-      <Products products={products} />
-
-      <input
-        type="text"
-        placeholder="Search.."
-        onChange={(event) => {
-          setSearch(event.target.value);
-        }}
-        search={search}
-      />
+      <Products products={products} onAddToCart={addCart} />
     </div>
   );
 };
